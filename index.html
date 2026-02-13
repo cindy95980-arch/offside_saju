@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>골때리는 스카우팅 Report (Pro)</title>
+    <title>내 안의 축구빌런 테스트</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,14 +38,14 @@
             </h1>
             <p class="text-slate-400 font-bold uppercase tracking-widest"
                 style="font-size: 0.875rem; letter-spacing: 0.15em;">
-                Hyper-Realistic Scouting
+                Hyper-Realistic Villain Scouting
             </p>
         </div>
 
         <form id="profile-form" class="glass glass-panel p-8 w-full">
             <div class="mb-4">
                 <label for="user-name">Player Name</label>
-                <input type="text" id="user-name" required placeholder="분석할 이름을 입력하세요">
+                <input type="text" id="user-name" required placeholder="선수의 이름 (닉네임)을 입력하세요">
             </div>
 
             <div class="mb-4">
@@ -67,13 +67,13 @@
             </div>
 
             <button type="submit" class="btn-primary">
-                내 정체 확인하기 🔎
+                내 빌런 확인하기 🔎
             </button>
         </form>
 
         <p class="mt-8 text-center text-slate-500 font-bold uppercase tracking-widest"
             style="font-size: 0.65rem; letter-spacing: 0.2em;">
-            Soccer Persona Lab • Reality Edition
+            Offside February 2026 • Soccer Villain Test
         </p>
     </div>
 
@@ -93,7 +93,7 @@
 
         <div class="flex flex-col gap-2">
             <h2 class="text-emerald-400 font-black" style="font-size: 1.5rem;">나의 타고난 플레이를 스캔 중...</h2>
-            <p class="text-slate-400 font-bold" style="font-size: 0.875rem;">"생년월일에 숨겨진 빌런을 스카우트하고 있습니다"</p>
+            <p class="text-slate-400 font-bold" style="font-size: 0.875rem;">"숨겨진 빌런을 스카우트하고 있습니다"</p>
             <p class="text-slate-500 uppercase tracking-widest" style="font-size: 0.65rem; margin-top: 5px;">Profiling
                 Villain DNA</p>
         </div>
@@ -108,6 +108,7 @@
             <div class="player-card">
 
                 <!-- Header -->
+                <!-- Header -->
                 <div class="card-header">
                     <div class="ovr-box">
                         <span id="card-ovr" class="text-emerald-400 font-black tracking-tighter"
@@ -115,10 +116,9 @@
                         <span class="text-emerald-500 font-black uppercase tracking-widest"
                             style="font-size: 0.6rem;">OVR</span>
                     </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <span id="card-id" class="text-white font-black tracking-tighter"
-                            style="font-size: 1.25rem;">DNA-CODE</span>
-                        <span id="card-pos" class="dna-badge">FW</span>
+                    <div style="opacity: 0.9;">
+                        <img src="./assets/logo.png" alt="Logo"
+                            style="height: 64px; width: auto; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.5));">
                     </div>
                 </div>
 
@@ -128,12 +128,14 @@
                 </div>
 
                 <!-- Name & Title -->
-                <div class="mb-8">
+                <div class="mb-5">
                     <h3 id="card-name" class="text-white font-black italic tracking-tight"
-                        style="font-size: 2.25rem; font-family: var(--font-heading); margin-bottom: 0.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                        style="font-size: 1.85rem; font-family: var(--font-heading); margin-bottom: 1.25rem; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">
                         NAME</h3>
-                    <p id="card-summary" class="text-emerald-400 font-black tracking-tight" style="font-size: 0.95rem;">
-                        Summary Text</p>
+                    <div id="card-summary" class="scouting-info-box">
+                        <span class="scouting-label">OFFSIDE SCOUTING</span>
+                        <span id="scouting-content" class="scouting-content">...</span>
+                    </div>
                 </div>
 
                 <!-- Stats Grid -->
@@ -256,17 +258,20 @@
 
             <button id="reset-btn"
                 class="glass w-full py-5 rounded-3xl font-black text-slate-500 hover:text-white transition-all border border-white-10 mt-10 mb-4 btn-hover-effect">
-                다른 빌런 선수 찾아내기
+                다른 빌런 선수 찾아내기 <span class="villain-motion">😈</span>
             </button>
 
             <a href="https://www.instagram.com/off.3ide?igsh=MnNiaG8zOXlrbXY5" target="_blank"
-                class="glass w-full py-5 rounded-3xl font-black text-slate-500 hover:text-white transition-all border border-white-10 mb-8 btn-hover-effect"
-                style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
-                오프사이드 인스타 확인하기!
+                class="glass w-full py-4 rounded-3xl font-black text-slate-500 hover:text-white transition-all border border-white-10 mb-8 btn-hover-effect"
+                style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; gap: 0.1rem;">
+                <div style="display: flex; align-items: center; gap: 0.3rem;">
+                    오프사이드 인스타 확인하기 <span class="insta-motion">🙌</span>
+                </div>
+                <span style="font-size: 0.75rem; opacity: 0.6; font-weight: 600;">팔로우 해주시면 큰 힘이 됩니다!</span>
             </a>
 
             <!-- Share Buttons (Bottom) -->
-            <div class="flex flex-col items-center gap-4 mb-12">
+            <div class="flex flex-col items-center gap-4 mb-12 mt-6">
                 <p class="text-white font-bold opacity-80" style="font-size: 0.9rem;">결과 공유하기</p>
                 <div class="flex gap-4">
                     <button id="share-down-btn" class="btn-share-simple" aria-label="이미지 저장">
@@ -278,15 +283,13 @@
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
                     </button>
-                    <button id="share-url-btn" class="btn-share-insta" aria-label="링크 공유하기">
-                        <!-- Generic Share Icon -->
+                    <button id="share-url-btn" class="btn-share-insta" aria-label="링크 공유하기"
+                        style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                        <!-- Link Icon -->
                         <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6 stroke-white" stroke="currentColor"
                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                         </svg>
                     </button>
                     <button id="share-kakao-btn" class="btn-share-kakao" aria-label="카카오톡 공유">

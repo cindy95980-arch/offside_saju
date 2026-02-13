@@ -575,6 +575,19 @@ const PERSONA_DB = {
     }
 };
 
+const REAL_POS_DB = {
+    '갑자': '딥라잉 플레이메이커', '갑술': '스토퍼', '갑신': '홀딩 미드필더', '갑오': '클래식 윙어', '갑진': '타겟 맨', '갑인': '트레콰르티스타',
+    '을축': '스위퍼', '을해': '윙백', '을유': '패스 마스터', '을미': '앵커맨', '을사': '테크니션', '을묘': '대인 마커',
+    '병인': '판타지스타', '병자': '쉐도우 스트라이커', '병술': '박스 투 박스', '병신': '펄스 나인', '병오': '캐논 슈터', '병진': '리베로',
+    '정묘': '키커', '정축': '포처', '정해': '연계형 공격수', '정유': '레지스타', '정미': '로테이션 멤버', '정사': '압박형 윙어',
+    '무진': '커맨더', '무오': '파워 포워드', '무신': '유틸리티 플레이어', '무술': '수비형 미드필더', '무자': '골 사냥꾼', '무인': '공격형 윙백',
+    '기사': '지능형 수비수', '기묘': '숏 패서', '기유': '슈퍼 조커', '기축': '하드 워커', '기해': '프리 롤', '기미': '타겟 터',
+    '경오': '인사이드 포워드', '경진': '파이터', '경인': '윙 포워드', '경술': '디스트로이어', '경자': '클러치 슈터', '경신': '솔로 플레이어',
+    '신사': '라움도이터', '신유': '전술가', '신해': '무드 메이커', '신묘': '스피드 스타', '신축': '데이터 분석가', '신미': '진공청소기',
+    '임신': '롱 패서', '임오': '트릭스터', '임진': '클러치 히터', '임인': '링커', '임자': '컨트롤 타워', '임술': '인사이드 커터',
+    '계유': '볼 플레잉 디펜더', '계묘': '고스트', '계사': '멘탈리스트', '계미': '원더 보이', '계축': '스틸러', '계해': '밸런서'
+};
+
 function calculateSaju(dateString) {
     const target = new Date(dateString);
     const base = new Date(2024, 0, 1);
@@ -589,6 +602,7 @@ function generatePersona(dateString) {
     const idx = calculateSaju(dateString);
     const iljuName = SIXTY_GAPJA[idx];
     const char = PERSONA_DB[iljuName] || PERSONA_DB['갑자'];
+    const realPos = REAL_POS_DB[iljuName] || '선수';
 
     const stats = {
         pas: 50 + (idx % 40),
@@ -605,7 +619,7 @@ function generatePersona(dateString) {
     const worstDesc = char.worst_desc || `${char.worst} (설명 없음)`;
 
     return {
-        profileId: `DNA-${char.trait.replace(/\s+/g, '')}`,
+        profileId: `${char.pos} ${realPos}`,
         ilju: iljuName,
         position: char.pos,
         role: char.trait,
@@ -814,7 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Download failed:', err);
-            alert('이미지 저장에 실패했습니다.');
+            alert('이미지 저장 실패 😢: ' + err.message);
         }
     });
 
@@ -838,10 +852,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Kakao Share Logic
     // 3. Kakao Share Logic
     document.getElementById('share-kakao-btn').addEventListener('click', () => {
-        alert('카카오톡 공유를 시작합니다.'); // Debug alert 1
         // 1. Check if SDK is loaded
         if (!window.Kakao) {
-            alert('SDK 미로드'); // Debug alert 2
+            console.error('Kakao SDK not loaded');
             return;
         }
 
@@ -851,20 +864,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 Kakao.init('5d70a277233ce5905c0eb905fea0f96e');
             }
 
-            // 3. Check Share Capability
-            if (!Kakao.Share) {
-                alert('Kakao.Share 미지원'); // Debug alert 3
-                return;
-            }
-
-            const title = "골때리는 스카우팅 Report";
+            const title = "내 안의 축구빌런 Report";
             const description = document.getElementById('res-advice') ?
                 document.getElementById('res-advice').innerText : '당신의 축구 페르소나를 확인하세요!';
             const imageUrl = 'https://ifh.cc/g/TaMe5q.jpg';
             const linkUrl = window.location.href;
 
             // 3. Call Share API
-            alert('공유 창을 띄웁니다...'); // Debug alert 4
             Kakao.Share.sendDefault({
                 objectType: 'feed',
                 content: {
@@ -889,18 +895,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Kakao Share Error:', err);
-            alert('실패: ' + err.message); // Debug alert 5
+            alert('카카오톡 공유 중 오류가 발생했습니다.');
         }
     });
 });
 
 function render(name, data) {
     document.getElementById('card-ovr').innerText = data.ovr;
-    document.getElementById('card-id').innerText = data.profileId;
-    document.getElementById('card-pos').innerText = data.ilju;
+    document.getElementById('scouting-content').innerText = data.profileId;
     document.getElementById('card-icon').innerText = data.icon;
     document.getElementById('card-name').innerText = name;
-    document.getElementById('card-summary').innerText = data.position;
 
     document.getElementById('stat-pas').innerText = data.stats.pas;
     document.getElementById('stat-com').innerText = data.stats.com;
@@ -926,7 +930,7 @@ function render(name, data) {
              <h4 class="text-emerald-500 font-black uppercase tracking-widest" style="font-size: 0.8rem;">시그니처 무브 (Signature Skill)</h4>
         </div>
         <div class="skill-box">
-             <p class="text-emerald-400 font-black mb-1" style="font-size: 0.9rem;">${data.specialSkill.name}</p>
+             <p class="text-emerald-400 font-black mb-3" style="font-size: 0.9rem;">${data.specialSkill.name}</p>
              <p class="text-slate-300 font-medium" style="font-size: 0.8rem; line-height: 1.5;">${data.specialSkill.description}</p>
         </div>
     `;

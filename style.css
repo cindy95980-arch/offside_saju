@@ -948,3 +948,149 @@ button.btn-primary:active {
     font-size: 1rem;
     /* Match anchor tag default inheritance */
 }
+
+/* New DNA Code UI */
+.dna-type-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    border-radius: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.dna-type-container:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(52, 211, 153, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dna-status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--emerald-400);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+        box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* Offside Scouting Badge */
+.scouting-info-box {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    border-radius: 0.75rem;
+    padding: 0.6rem 1rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.scouting-label {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--emerald-400);
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+.scouting-content {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.03em;
+}
+
+
+/* Villain Emoji Animation */
+.villain-motion {
+    display: inline-block;
+    margin-left: 0.5rem;
+    transform-origin: center bottom;
+    transition: transform 0.3s ease;
+}
+
+.btn-hover-effect:hover .villain-motion {
+    animation: villainSpace 1.5s infinite ease-in-out;
+}
+
+@keyframes villainSpace {
+
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: rotate(-10deg) scale(1.25);
+    }
+
+    50% {
+        transform: rotate(0deg) scale(1.1);
+    }
+
+    75% {
+        transform: rotate(10deg) scale(1.25);
+    }
+}
+
+/* Insta Emoji Animation */
+.insta-motion {
+    display: inline-block;
+    margin-left: 0.5rem;
+    transform-origin: center bottom;
+    transition: transform 0.3s ease;
+}
+
+.btn-hover-effect:hover .insta-motion {
+    animation: instaWave 1.2s infinite ease-in-out;
+}
+
+@keyframes instaWave {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-3px) rotate(-10deg);
+    }
+
+    50% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    75% {
+        transform: translateY(-3px) rotate(10deg);
+    }
+}
