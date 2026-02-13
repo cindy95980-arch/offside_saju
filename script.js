@@ -765,24 +765,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create a temporary container for Story layout
         // Instead of cloning the whole view which has complex flex layouts, 
         // let's clone just the report card and wrap it in a story container
+        const playerCard = document.querySelector('.player-card-container');
         const reportCard = document.getElementById('report-card');
         const verdict = document.querySelector('#result-view .glass-panel:last-of-type'); // Select the verdict box
 
-        if (!reportCard) return;
+        if (!playerCard || !reportCard) return;
 
-        // Create a dedicated Story Container
+        // Create a dedicated Story Container for Capture (Hidden)
         const storyContainer = document.createElement('div');
         storyContainer.style.position = 'fixed';
         storyContainer.style.top = '0';
         storyContainer.style.left = '0';
-        storyContainer.style.width = '1080px'; // HD Story Width
-        storyContainer.style.height = '1920px'; // HD Story Height
-        storyContainer.style.padding = '120px 80px'; // Safe Area Padding
-        storyContainer.style.background = '#1a1a2e'; // Dark BG
+        storyContainer.style.width = '1080px';
+        storyContainer.style.height = '1920px';
+        storyContainer.style.padding = '120px 60px'; // Safe Area Padding
+        storyContainer.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)'; // Explicit Background
         storyContainer.style.zIndex = '-9999';
         storyContainer.style.display = 'flex';
         storyContainer.style.flexDirection = 'column';
-        storyContainer.style.gap = '60px';
+        storyContainer.style.gap = '80px';
         storyContainer.style.alignItems = 'center';
         storyContainer.style.justifyContent = 'center';
         storyContainer.style.fontFamily = 'Pretendard, sans-serif';
@@ -790,78 +791,87 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add Branding Header
         const header = document.createElement('div');
         header.innerHTML = `
-            <h1 style="color:#34d399; font-size:3.5rem; font-weight:900; margin-bottom:1rem; text-align:center; text-transform:uppercase; letter-spacing: -0.05em;">Soccer Persona</h1>
-            <p style="color:#94a3b8; font-size:1.8rem; font-weight:700; text-align:center; letter-spacing: 0.2em;">OFFSIDE LAB</p>
+            <h1 style="color:#34d399; font-size:4rem; font-weight:900; margin-bottom:1rem; text-align:center; text-transform:uppercase; letter-spacing: -0.05em; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">Soccer Persona</h1>
+            <p style="color:#94a3b8; font-size:2rem; font-weight:700; text-align:center; letter-spacing: 0.2em;">OFFSIDE LAB</p>
         `;
         storyContainer.appendChild(header);
 
-        // Clone Report Card and Style for High Res
-        const cardClone = reportCard.cloneNode(true);
-        cardClone.style.background = 'rgba(255, 255, 255, 0.05)';
-        cardClone.style.backdropFilter = 'blur(0px)'; // Remove blur for better capture performance
-        cardClone.style.borderRadius = '50px';
-        cardClone.style.padding = '60px';
-        cardClone.style.width = '100%';
-        cardClone.style.boxShadow = '0 50px 100px -20px rgba(0,0,0,0.5)';
-        cardClone.style.border = '2px solid rgba(255,255,255,0.1)';
+        // Capture THE WHOLE PLAYER CARD + REPORT summary if possible, or just the player card for "Test Profile"
+        // Let's combine Player Card + Verdict for a nice Story.
 
-        // Scale text inside card for story resolution
-        const allText = cardClone.querySelectorAll('*');
-        allText.forEach(el => {
+        const contentWrapper = document.createElement('div');
+        contentWrapper.style.display = 'flex';
+        contentWrapper.style.flexDirection = 'column';
+        contentWrapper.style.gap = '40px';
+        contentWrapper.style.width = '100%';
+        contentWrapper.style.alignItems = 'center';
+
+        const playerCardClone = playerCard.cloneNode(true);
+        // We can't easily scale using CSS transform for html2canvas sometimes. 
+        // Better to just set explicit large widths.
+        playerCardClone.style.transform = 'none';
+        playerCardClone.style.width = '100%';
+        playerCardClone.style.maxWidth = 'none';
+        playerCardClone.style.borderRadius = '40px';
+        playerCardClone.style.padding = '60px';
+
+        // Scale inner text of player card
+        const pcTexts = playerCardClone.querySelectorAll('*');
+        pcTexts.forEach(el => {
             const style = window.getComputedStyle(el);
-            const currentSize = parseFloat(style.fontSize);
-            if (currentSize) {
-                // Roughly scale up text for 1080p width
-                // This is a heuristic; might need tweaking based on base font size
-                if (currentSize < 24) el.style.fontSize = (currentSize * 2.5) + 'px';
-                else el.style.fontSize = (currentSize * 2) + 'px';
-            }
+            const fontSize = parseFloat(style.fontSize);
+            if (fontSize) el.style.fontSize = (fontSize * 1.8) + 'px';
         });
 
-        storyContainer.appendChild(cardClone);
+        contentWrapper.appendChild(playerCardClone);
+        storyContainer.appendChild(contentWrapper);
 
         document.body.appendChild(storyContainer);
 
         try {
             const canvas = await html2canvas(storyContainer, {
-                backgroundColor: '#1a1a2e',
-                scale: 1, // Already set to HD dimensions
+                width: 1080,
+                height: 1920,
+                scale: 1,
+                backgroundColor: null, // Transparent to let container bg show
                 logging: false,
                 useCORS: true,
                 allowTaint: true,
-                dpi: 144
             });
-
 
             canvas.toBlob(async (blob) => {
                 if (!blob) return;
-                const file = new File([blob], 'soccer_persona_story.png', { type: 'image/png' });
+                const file = new File([blob], 'offside_saju_story.png', { type: 'image/png' });
 
                 if (navigator.share && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
                             files: [file],
-                            title: '골때리는 스카우팅',
-                            text: '내 축구 페르소나 결과! @off.3ide'
+                            // Instagram on Android sometimes ignores text/title when sharing image, but good to have
+                            title: '내 축구 빌런 유형은?',
+                            text: '오프사이드에서 당신의 축구 페르소나를 확인하세요! #오프사이드 #축구사주'
                         });
                     } catch (err) {
                         console.log('Share canceled or failed', err);
                     }
                 } else {
-                    // Fallback for desktop or unsupported browsers
-                    alert('모바일 기기에서 인스타그램 스토리 공유가 가능합니다. 이미지를 저장합니다!');
+                    // Fallback
+                    alert('이미지를 저장합니다. 인스타그램 스토리에서 직접 업로드해주세요!');
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
-                    link.download = 'soccer_persona_story.png';
+                    link.download = 'offside_saju_story.png';
                     link.click();
                 }
+
+                // Cleanup
+                document.body.removeChild(storyContainer);
+
             }, 'image/png');
 
         } catch (err) {
-            console.error('Capture failed:', err);
-            alert('이미지 생성에 실패했습니다. 다시 시도해주세요.');
-        } finally {
-            document.body.removeChild(storyContainer);
+            console.error('Capture failed', err);
+            alert('이미지 생성에 실패했습니다.');
+            if (document.body.contains(storyContainer)) document.body.removeChild(storyContainer);
         }
     });
 

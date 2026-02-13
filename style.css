@@ -941,3 +941,8 @@ button.btn-primary:active {
     height: 1.5rem;
     pointer-events: none;
 }
+
+#reset-btn {
+    font-size: 1rem;
+    /* Match anchor tag default inheritance */
+}
