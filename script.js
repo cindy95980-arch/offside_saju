@@ -778,7 +778,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Image Download Logic (Profile + Report Separately)
     document.getElementById('share-down-btn').addEventListener('click', async () => {
-        // Change: Capture only the inner .player-card (excludes glow/container margin)
         const cardElement = document.querySelector('.player-card');
         const reportElement = document.getElementById('report-card');
 
@@ -792,19 +791,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 useCORS: true
             });
 
-            const linkProfile = document.createElement('a');
-            linkProfile.href = canvasProfile.toDataURL('image/png');
-            linkProfile.download = 'soccer_persona_profile.png';
-            linkProfile.click();
-
             // --- 2. Capture Report Card ---
-            // html2canvas cannot render backdrop-filter (blur). 
-            // We apply a solid background temporarily to ensure readability.
             const originalBg = reportElement.style.background;
             const originalBorder = reportElement.style.borderColor;
 
-            reportElement.style.background = '#1a1a2e'; // Dark solid background matching theme
-            reportElement.style.border = '1px solid #34d399'; // Emerald border for style
+            reportElement.style.background = '#1a1a2e';
+            reportElement.style.border = '1px solid #34d399';
 
             const canvasReport = await html2canvas(reportElement, {
                 scale: 3,
@@ -816,7 +808,33 @@ document.addEventListener('DOMContentLoaded', () => {
             reportElement.style.background = originalBg;
             reportElement.style.borderColor = originalBorder;
 
-            // Download with a slight delay to prevent browser blocking multiple downloads
+            // --- 3. Attempt Native Share (Mobile Gallery Save) ---
+            try {
+                const blobProfile = await new Promise(resolve => canvasProfile.toBlob(resolve, 'image/png'));
+                const blobReport = await new Promise(resolve => canvasReport.toBlob(resolve, 'image/png'));
+
+                const fileProfile = new File([blobProfile], 'soccer_persona_profile.png', { type: 'image/png' });
+                const fileReport = new File([blobReport], 'soccer_persona_report.png', { type: 'image/png' });
+                const files = [fileProfile, fileReport];
+
+                if (navigator.canShare && navigator.canShare({ files })) {
+                    await navigator.share({
+                        files: files,
+                        title: '내 안의 축구빌런 결과',
+                        text: '저의 축구 빌런 유형 결과입니다!'
+                    });
+                    return; // Success!
+                }
+            } catch (shareErr) {
+                console.warn('Native share failed, falling back to download:', shareErr);
+            }
+
+            // --- 4. Fallback: Manual Download ---
+            const linkProfile = document.createElement('a');
+            linkProfile.href = canvasProfile.toDataURL('image/png');
+            linkProfile.download = 'soccer_persona_profile.png';
+            linkProfile.click();
+
             setTimeout(() => {
                 const linkReport = document.createElement('a');
                 linkReport.href = canvasReport.toDataURL('image/png');
@@ -827,7 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('프로필 카드와 리포트 카드가 각각 저장됩니다. (총 2장)');
 
         } catch (err) {
-            console.error('Download failed:', err);
+            console.error('Download/Share failed:', err);
             alert('이미지 저장 실패 😢: ' + err.message);
         }
     });
