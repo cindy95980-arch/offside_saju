@@ -867,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = "내 안의 축구빌런 Report";
             const description = document.getElementById('res-advice') ?
                 document.getElementById('res-advice').innerText : '당신의 축구 페르소나를 확인하세요!';
-            const imageUrl = 'https://ifh.cc/g/TaMe5q.jpg';
+            const imageUrl = new URL('./assets/banner.png', window.location.href).href;
             const linkUrl = window.location.href;
 
             // 3. Call Share API
@@ -884,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 buttons: [
                     {
-                        title: '결과 확인하기',
+                        title: '빌런 확인하기',
                         link: {
                             mobileWebUrl: linkUrl,
                             webUrl: linkUrl,
