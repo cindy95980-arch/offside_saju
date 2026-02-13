@@ -654,6 +654,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultView = document.getElementById('result-view');
     const form = document.getElementById('profile-form');
 
+    // Intro Emoji Animation
+    const introEmoji = document.getElementById('intro-emoji');
+    if (introEmoji) {
+        const icons = ['⚽', '😈', '🌲', '🔥', '⛰️', '⚔️', '💧', '🐯', '🧠', '✨', '👻'];
+        let idx = 0;
+
+        setInterval(() => {
+            introEmoji.style.opacity = '0';
+            setTimeout(() => {
+                idx = (idx + 1) % icons.length;
+                introEmoji.innerText = icons[idx];
+                introEmoji.style.opacity = '1';
+            }, 300);
+        }, 2000);
+    }
+
     // 0. Check URL Params for Shared Result
     const params = new URLSearchParams(window.location.search);
     const encodedName = params.get('data_n'); // Changed param name to be less obvious
