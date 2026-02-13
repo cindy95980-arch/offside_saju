@@ -765,35 +765,58 @@ document.addEventListener('DOMContentLoaded', () => {
         const playerCard = document.querySelector('.player-card-container');
         if (!playerCard) return;
 
-        // 1. Store original styles
-        const originalWidth = playerCard.style.width;
-        const originalMaxWidth = playerCard.style.maxWidth;
-        const originalTransform = playerCard.style.transform;
+        // 1. Create a dedicated Story Container (9:16 Ratio)
+        const storyContainer = document.createElement('div');
+        storyContainer.style.position = 'fixed';
+        storyContainer.style.top = '0';
+        storyContainer.style.left = '0';
+        storyContainer.style.width = '1080px';
+        storyContainer.style.height = '1920px';
+        storyContainer.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)';
+        storyContainer.style.zIndex = '-9999';
+        storyContainer.style.display = 'flex';
+        storyContainer.style.flexDirection = 'column';
+        storyContainer.style.alignItems = 'center';
+        storyContainer.style.justifyContent = 'center';
+        storyContainer.style.fontFamily = 'Pretendard, sans-serif';
+
+        // 2. Add Title/Brand Logic (Optional, keeps it clean or adds context)
+        const header = document.createElement('div');
+        header.innerHTML = `
+            <h1 style="color:#34d399; font-size:3rem; font-weight:900; margin-bottom:0.5rem; text-align:center; text-transform:uppercase; letter-spacing: -0.05em; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">Soccer Persona</h1>
+        `;
+        header.style.marginBottom = '80px';
+        storyContainer.appendChild(header);
+
+        // 3. Clone Player Card and Style for Story
+        const cardClone = playerCard.cloneNode(true);
+        // Reset positioning styles for the clone
+        cardClone.style.margin = '0';
+        cardClone.style.transform = 'scale(1.5)'; // Scale up for visibility
+        cardClone.style.transformOrigin = 'center';
+
+        // Remove glow effect from clone if it causes issues or double glow
+        const glow = cardClone.querySelector('.player-card-glow');
+        if (glow) glow.style.display = 'none';
+
+        storyContainer.appendChild(cardClone);
+        document.body.appendChild(storyContainer);
 
         try {
-            // 2. Apply temporary styles for Mobile Capture (iPhone X spec)
-            playerCard.style.width = '375px';
-            playerCard.style.maxWidth = 'none';
-            // Ensure centered layout is preserved or handled if needed, but usually width fix is enough for the element capture.
-
-            // 3. Capture with html2canvas options
-            const canvas = await html2canvas(playerCard, {
-                scale: 3,               // Retina display resolution
-                windowWidth: 375,       // Emulate Mobile Device Width
-                windowHeight: 812,      // Emulate Mobile Device Height
-                backgroundColor: null,  // Transparent
-                useCORS: true,          // Cross-origin support
-                allowTaint: true
+            // 4. Capture the Story Container
+            const canvas = await html2canvas(storyContainer, {
+                width: 1080,
+                height: 1920,
+                scale: 1, // Standard scale since container is already HD
+                backgroundColor: null,
+                useCORS: true,
+                allowTaint: true,
+                logging: false
             });
-
-            // 4. Restore styles
-            playerCard.style.width = originalWidth;
-            playerCard.style.maxWidth = originalMaxWidth;
-            playerCard.style.transform = originalTransform;
 
             canvas.toBlob(async (blob) => {
                 if (!blob) return;
-                const file = new File([blob], 'offside_saju_profile.png', { type: 'image/png' });
+                const file = new File([blob], 'offside_saju_story.png', { type: 'image/png' });
 
                 if (navigator.share && navigator.canShare({ files: [file] })) {
                     try {
@@ -808,19 +831,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
-                    link.download = 'offside_saju_profile.png';
+                    link.download = 'offside_saju_story.png';
                     link.click();
-                    alert('이미지가 저장되었습니다! 인스타그램 스토리에서 사진을 선택하고 "링크" 스티커를 추가해보세요.');
+                    alert('이미지가 저장되었습니다! 인스타그램 스토리에 공유해보세요.');
                 }
+
+                // Cleanup
+                document.body.removeChild(storyContainer);
             }, 'image/png');
 
         } catch (err) {
             console.error('Capture failed', err);
             alert('이미지 생성에 실패했습니다.');
-            // Restore styles on error
-            playerCard.style.width = originalWidth;
-            playerCard.style.maxWidth = originalMaxWidth;
-            playerCard.style.transform = originalTransform;
+            if (document.body.contains(storyContainer)) document.body.removeChild(storyContainer);
         }
     });
 
