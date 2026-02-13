@@ -882,7 +882,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 Kakao.init('5d70a277233ce5905c0eb905fea0f96e');
             }
 
-            const title = "내 안의 축구빌런 Report";
+            const playerName = document.getElementById('user-name').value || '내';
+            const title = `${playerName} 안의 축구빌런 Report`;
             const description = document.getElementById('res-advice') ?
                 document.getElementById('res-advice').innerText : '당신의 축구 페르소나를 확인하세요!';
             const imageUrl = new URL('./assets/banner.png', window.location.href).href;
