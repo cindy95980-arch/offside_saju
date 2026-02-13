@@ -899,6 +899,7 @@ button.btn-primary:active {
     outline: none;
     transition: all 0.2s;
     font-family: var(--font-body);
+    margin: 0;
 }
 
 .date-input-wrapper input[type="tel"]:focus {
@@ -909,7 +910,8 @@ button.btn-primary:active {
 /* Custom Icon Positioning */
 .calendar-icon {
     position: absolute;
-    right: 0.5rem;
+    right: 1rem;
+    /* Moved further left to look more 'inside' */
     top: 50%;
     transform: translateY(-50%);
     width: 2.5rem;
