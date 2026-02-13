@@ -836,22 +836,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 3. Kakao Share Logic
+    // 3. Kakao Share Logic
     document.getElementById('share-kakao-btn').addEventListener('click', () => {
-        // Initialize Kakao SDK
-        if (window.Kakao && !Kakao.isInitialized()) {
-            Kakao.init('5d70a277233ce5905c0eb905fea0f96e');
+        // 1. Check if SDK is loaded
+        if (!window.Kakao) {
+            alert('카카오톡 SDK가 로드되지 않았습니다. 잠시 후 다시 시도해주세요.');
+            return;
         }
 
-        const title = "골때리는 스카우팅 Report";
-        // Get the description from the result
-        const description = document.getElementById('res-advice') ?
-            document.getElementById('res-advice').innerText : '당신의 축구 페르소나를 확인하세요!';
+        try {
+            // 2. Initialize if needed
+            if (!Kakao.isInitialized()) {
+                Kakao.init('5d70a277233ce5905c0eb905fea0f96e');
+            }
 
-        // Use a default image or one generated (generating a URL for a dynamic image is hard without a backend)
-        const imageUrl = 'https://ifh.cc/g/TaMe5q.jpg'; // Provided Placeholder Image
-        const linkUrl = window.location.href;
+            const title = "골때리는 스카우팅 Report";
+            const description = document.getElementById('res-advice') ?
+                document.getElementById('res-advice').innerText : '당신의 축구 페르소나를 확인하세요!';
+            const imageUrl = 'https://ifh.cc/g/TaMe5q.jpg';
+            const linkUrl = window.location.href;
 
-        if (window.Kakao) {
+            // 3. Call Share API
             Kakao.Share.sendDefault({
                 objectType: 'feed',
                 content: {
@@ -873,6 +878,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                 ],
             });
+
+        } catch (err) {
+            console.error('Kakao Share Error:', err);
+            alert('카카오톡 공유에 실패했습니다.\n(원인: 도메인 미등록 또는 팝업 차단)');
         }
     });
 });
