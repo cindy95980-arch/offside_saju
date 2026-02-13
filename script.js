@@ -762,116 +762,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Instagram Share Logic (Mobile Native Share - Story Optimized)
     // 2. Instagram Share Logic (Mobile Native Share - Story Optimized)
     document.getElementById('share-insta-btn').addEventListener('click', async () => {
-        // Create a temporary container for Story layout
-        // Instead of cloning the whole view which has complex flex layouts, 
-        // let's clone just the report card and wrap it in a story container
         const playerCard = document.querySelector('.player-card-container');
-        const reportCard = document.getElementById('report-card');
-        const verdict = document.querySelector('#result-view .glass-panel:last-of-type'); // Select the verdict box
-
-        if (!playerCard || !reportCard) return;
-
-        // Create a dedicated Story Container for Capture (Hidden)
-        const storyContainer = document.createElement('div');
-        storyContainer.style.position = 'fixed';
-        storyContainer.style.top = '0';
-        storyContainer.style.left = '0';
-        storyContainer.style.width = '1080px';
-        storyContainer.style.height = '1920px';
-        storyContainer.style.padding = '120px 60px'; // Safe Area Padding
-        storyContainer.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)'; // Explicit Background
-        storyContainer.style.zIndex = '-9999';
-        storyContainer.style.display = 'flex';
-        storyContainer.style.flexDirection = 'column';
-        storyContainer.style.gap = '80px';
-        storyContainer.style.alignItems = 'center';
-        storyContainer.style.justifyContent = 'center';
-        storyContainer.style.fontFamily = 'Pretendard, sans-serif';
-
-        // Add Branding Header
-        const header = document.createElement('div');
-        header.innerHTML = `
-            <h1 style="color:#34d399; font-size:4rem; font-weight:900; margin-bottom:1rem; text-align:center; text-transform:uppercase; letter-spacing: -0.05em; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">Soccer Persona</h1>
-            <p style="color:#94a3b8; font-size:2rem; font-weight:700; text-align:center; letter-spacing: 0.2em;">OFFSIDE LAB</p>
-        `;
-        storyContainer.appendChild(header);
-
-        // Capture THE WHOLE PLAYER CARD + REPORT summary if possible, or just the player card for "Test Profile"
-        // Let's combine Player Card + Verdict for a nice Story.
-
-        const contentWrapper = document.createElement('div');
-        contentWrapper.style.display = 'flex';
-        contentWrapper.style.flexDirection = 'column';
-        contentWrapper.style.gap = '40px';
-        contentWrapper.style.width = '100%';
-        contentWrapper.style.alignItems = 'center';
-
-        const playerCardClone = playerCard.cloneNode(true);
-        // We can't easily scale using CSS transform for html2canvas sometimes. 
-        // Better to just set explicit large widths.
-        playerCardClone.style.transform = 'none';
-        playerCardClone.style.width = '100%';
-        playerCardClone.style.maxWidth = 'none';
-        playerCardClone.style.borderRadius = '40px';
-        playerCardClone.style.padding = '60px';
-
-        // Scale inner text of player card
-        const pcTexts = playerCardClone.querySelectorAll('*');
-        pcTexts.forEach(el => {
-            const style = window.getComputedStyle(el);
-            const fontSize = parseFloat(style.fontSize);
-            if (fontSize) el.style.fontSize = (fontSize * 1.8) + 'px';
-        });
-
-        contentWrapper.appendChild(playerCardClone);
-        storyContainer.appendChild(contentWrapper);
-
-        document.body.appendChild(storyContainer);
+        if (!playerCard) return;
 
         try {
-            const canvas = await html2canvas(storyContainer, {
-                width: 1080,
-                height: 1920,
-                scale: 1,
-                backgroundColor: null, // Transparent to let container bg show
-                logging: false,
+            // Capture only the player card
+            const canvas = await html2canvas(playerCard, {
+                scale: 4, // High resolution for clear text
+                backgroundColor: null, // Transparent background
                 useCORS: true,
-                allowTaint: true,
+                allowTaint: true
             });
 
             canvas.toBlob(async (blob) => {
                 if (!blob) return;
-                const file = new File([blob], 'offside_saju_story.png', { type: 'image/png' });
+                const file = new File([blob], 'offside_saju_profile.png', { type: 'image/png' });
 
                 if (navigator.share && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
                             files: [file],
-                            // Instagram on Android sometimes ignores text/title when sharing image, but good to have
                             title: '내 축구 빌런 유형은?',
-                            text: '오프사이드에서 당신의 축구 페르소나를 확인하세요! #오프사이드 #축구사주'
+                            text: '오프사이드에서 당신의 축구 페르소나를 확인하세요!',
                         });
                     } catch (err) {
                         console.log('Share canceled or failed', err);
                     }
                 } else {
-                    // Fallback
-                    alert('이미지를 저장합니다. 인스타그램 스토리에서 직접 업로드해주세요!');
+                    // Fallback for browsers that don't support file sharing
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
-                    link.download = 'offside_saju_story.png';
+                    link.download = 'offside_saju_profile.png';
                     link.click();
+                    alert('이미지가 저장되었습니다! 인스타그램 스토리에서 사진을 선택하고 "링크" 스티커를 추가해보세요.');
                 }
-
-                // Cleanup
-                document.body.removeChild(storyContainer);
-
             }, 'image/png');
 
         } catch (err) {
             console.error('Capture failed', err);
             alert('이미지 생성에 실패했습니다.');
-            if (document.body.contains(storyContainer)) document.body.removeChild(storyContainer);
         }
     });
 
