@@ -646,7 +646,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarIcon = document.getElementById('calendar-trigger');
 
     if (dateInput && datePicker && calendarIcon) {
-        // 1. No click handler needed for icon, as the input covers it.
+        // 1. Icon click opens the hidden date picker
+        calendarIcon.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default label actions if any
+            try {
+                if (datePicker.showPicker) {
+                    datePicker.showPicker();
+                } else {
+                    datePicker.click();
+                }
+            } catch (err) {
+                // Formatting fallback or older browser: just attempt click
+                datePicker.click();
+            }
+        });
 
         // 2. Sync: Date Picker -> Text Input
         datePicker.addEventListener('change', (e) => {

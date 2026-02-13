@@ -906,7 +906,7 @@ button.btn-primary:active {
     box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2);
 }
 
-/* Custom Icon Positioning - Now Interactive */
+/* Custom Icon Positioning */
 .calendar-icon {
     position: absolute;
     right: 0.5rem;
@@ -923,22 +923,6 @@ button.btn-primary:active {
     color: var(--slate-400);
     transition: all 0.2s;
     z-index: 10;
-    overflow: hidden;
-    /* Ensure input doesn't spill out visually if styled weirdly */
-}
-
-/* Ensure the date input covers the entire icon area for clicking */
-.calendar-icon input[type="date"] {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 20;
-    /* Higher than SVG */
-    appearance: none;
-    /* Mobile reset */
 }
 
 .calendar-icon:hover {
@@ -950,7 +934,4 @@ button.btn-primary:active {
     width: 1.5rem;
     height: 1.5rem;
     pointer-events: none;
-    /* Pass clicks through to parent/input */
-    z-index: 15;
-    /* Below input */
 }
