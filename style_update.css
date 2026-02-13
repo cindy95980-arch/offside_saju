@@ -1,0 +1,55 @@
+/* Date Input Customization */
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Text Input Style */
+.date-input-wrapper input[type="tel"] {
+    width: 100%;
+    background: var(--white-5);
+    border: 1px solid var(--white-10);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    padding-right: 3.5rem;
+    /* Space for icon */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    outline: none;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+
+.date-input-wrapper input[type="tel"]:focus {
+    border-color: rgba(52, 211, 153, 0.2);
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2);
+}
+
+/* Custom Icon Positioning - Now Interactive */
+.calendar-icon {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--slate-400);
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.calendar-icon:hover {
+    color: var(--emerald-400);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.calendar-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}

@@ -640,6 +640,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultView = document.getElementById('result-view');
     const form = document.getElementById('profile-form');
 
+    // Date Picker Logic
+    const dateInput = document.getElementById('birth-date');
+    const datePicker = document.getElementById('birth-date-picker');
+    const calendarIcon = document.getElementById('calendar-trigger');
+
+    if (dateInput && datePicker && calendarIcon) {
+        // 1. Icon click opens the hidden date picker
+        calendarIcon.addEventListener('click', () => {
+            // For modern browsers
+            if (datePicker.showPicker) {
+                datePicker.showPicker();
+            } else {
+                datePicker.click(); // Fallback
+            }
+        });
+
+        // 2. Sync: Date Picker -> Text Input
+        datePicker.addEventListener('change', (e) => {
+            dateInput.value = e.target.value;
+        });
+
+        // 3. Format/Validate Manual Input (YYYY-MM-DD)
+        dateInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/[^0-9]/g, '');
+            if (val.length > 8) val = val.slice(0, 8);
+
+            if (val.length > 6) {
+                e.target.value = val.slice(0, 4) + '-' + val.slice(4, 6) + '-' + val.slice(6);
+            } else if (val.length > 4) {
+                e.target.value = val.slice(0, 4) + '-' + val.slice(4);
+            } else {
+                e.target.value = val;
+            }
+
+            // Sync Text -> Date Picker (if valid date)
+            if (val.length === 8) {
+                const formatted = val.slice(0, 4) + '-' + val.slice(4, 6) + '-' + val.slice(6);
+                const dateObj = new Date(formatted);
+                if (!isNaN(dateObj.getTime())) {
+                    datePicker.value = formatted;
+                }
+            }
+        });
+    }
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('user-name').value;

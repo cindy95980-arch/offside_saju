@@ -875,68 +875,61 @@ button.btn-primary:active {
 
 .hidden {
     display: none !important;
-}/* Date Input Customization */
+}
+
+/* Date Input Customization */
 .date-input-wrapper {
     position: relative;
     width: 100%;
+    margin-bottom: 0;
 }
 
-/* Force iOS appearance clean up */
-.date-input-wrapper input[type="date"] {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: var(--white-5);
-    padding-right: 3rem;
-    /* Space for icon */
-    min-height: 3.5rem;
-    /* Easy tap target */
-    line-height: normal;
-    color: white;
-    font-family: var(--font-body);
+/* Text Input Style for Manual Entry */
+.date-input-wrapper input[type="tel"] {
     width: 100%;
-    margin-top: 0;
-    /* Reset global margin if any */
+    background: var(--white-5);
+    border: 1px solid var(--white-10);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    padding-right: 3.5rem;
+    /* Space for icon */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    outline: none;
+    transition: all 0.2s;
+    font-family: var(--font-body);
 }
 
-/* Align text for iOS */
-.date-input-wrapper input[type="date"]::-webkit-date-and-time-value {
-    text-align: left;
-    height: 1.5rem;
-    /* Fix vertical alignment */
+.date-input-wrapper input[type="tel"]:focus {
+    border-color: rgba(52, 211, 153, 0.2);
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2);
 }
 
-/* Custom Icon Positioning */
+/* Custom Icon Positioning - Now Interactive */
 .calendar-icon {
     position: absolute;
-    right: 1.25rem;
+    right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
-    pointer-events: none;
-    /* Let clicks pass through to the input */
-    color: var(--slate-400);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    color: var(--slate-400);
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.calendar-icon:hover {
+    color: var(--emerald-400);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .calendar-icon svg {
     width: 1.5rem;
     height: 1.5rem;
-}
-
-/* Override previous hacky full-width indicator if needed, 
-   but keeping the indicator invisible ensures clicking the right side works */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    background: transparent;
-    bottom: 0;
-    color: transparent;
-    cursor: pointer;
-    height: auto;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 100%;
-    z-index: 10;
-    /* Ensure it's on top of custom icon if needed, but pointer-events:none on icon handles it */
 }
