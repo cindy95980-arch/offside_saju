@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>골때리는 스카우팅 Report (Pro)</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Main Entry Container -->
+    <div id="main-container" class="container">
+
+        <div class="mb-10" style="display: flex; justify-content: center;">
+            <!-- Bubble Icon: Soccer Ball -->
+            <div class="bubble-icon-container" style="width: 140px; height: 140px;">
+                <div class="bubble-bg-blur"></div>
+                <div class="bubble-inner">
+                    <div class="bubble-highlight"></div>
+                    <span class="bubble-emoji">⚽</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-10">
+            <h1 class="font-black italic tracking-tighter"
+                style="font-size: 2.25rem; line-height: 1.1; margin-bottom: 0.5rem; font-family: var(--font-heading);">
+                내 안의 <span class="text-emerald-400">축구 빌런</span> 찾기
+            </h1>
+            <p class="text-slate-400 font-bold uppercase tracking-widest"
+                style="font-size: 0.875rem; letter-spacing: 0.15em;">
+                Hyper-Realistic Scouting
+            </p>
+        </div>
+
+        <form id="profile-form" class="glass glass-panel p-8 w-full">
+            <div class="mb-4">
+                <label for="user-name">Player Name</label>
+                <input type="text" id="user-name" required placeholder="분석할 이름을 입력하세요">
+            </div>
+
+            <div class="mb-4">
+                <label for="birth-date">Birth Date</label>
+                <input type="date" id="birth-date" required>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                내 정체 확인하기 🔎
+            </button>
+        </form>
+
+        <p class="mt-8 text-center text-slate-500 font-bold uppercase tracking-widest"
+            style="font-size: 0.65rem; letter-spacing: 0.2em;">
+            Soccer Persona Lab • Reality Edition
+        </p>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="container hidden" style="align-items: center; text-align: center;">
+        <div style="position: relative; margin-bottom: 2.5rem;">
+            <div style="position: absolute; inset: 0; background: var(--emerald-400); border-radius: 9999px; filter: blur(40px); opacity: 0.2;"
+                class="animate-pulse"></div>
+            <div class="animate-bounce" style="position: relative;">
+                <div class="bubble-icon-container" style="width: 100px; height: 100px;">
+                    <div class="bubble-inner">
+                        <span class="bubble-emoji" style="font-size: 3.5rem;">🔍</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <h2 class="text-emerald-400 font-black" style="font-size: 1.5rem;">나의 타고난 플레이를 스캔 중...</h2>
+            <p class="text-slate-400 font-bold" style="font-size: 0.875rem;">"생년월일에 숨겨진 빌런을 스카우트하고 있습니다"</p>
+            <p class="text-slate-500 uppercase tracking-widest" style="font-size: 0.65rem; margin-top: 5px;">Profiling
+                Villain DNA</p>
+        </div>
+    </div>
+
+    <!-- Result View -->
+    <div id="result-view" class="w-full hidden" style="max-width: 28rem; margin: 0 auto; padding: 3rem 1.5rem;">
+
+        <!-- Player Card -->
+        <div class="player-card-container">
+            <div class="player-card-glow"></div>
+            <div class="player-card">
+
+                <!-- Header -->
+                <div class="card-header">
+                    <div class="ovr-box">
+                        <span id="card-ovr" class="text-emerald-400 font-black tracking-tighter"
+                            style="font-size: 2rem;">88</span>
+                        <span class="text-emerald-500 font-black uppercase tracking-widest"
+                            style="font-size: 0.6rem;">OVR</span>
+                    </div>
+                    <div class="flex flex-col items-end gap-1">
+                        <span id="card-id" class="text-white font-black tracking-tighter"
+                            style="font-size: 1.25rem;">DNA-CODE</span>
+                        <span id="card-pos" class="dna-badge">FW</span>
+                    </div>
+                </div>
+
+                <!-- Central Icon -->
+                <div class="card-icon-area">
+                    <span id="card-icon" class="card-emoji">🦊</span>
+                </div>
+
+                <!-- Name & Title -->
+                <div class="mb-8">
+                    <h3 id="card-name" class="text-white font-black italic tracking-tight"
+                        style="font-size: 2.25rem; font-family: var(--font-heading); margin-bottom: 0.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                        NAME</h3>
+                    <p id="card-summary" class="text-emerald-400 font-black tracking-tight" style="font-size: 0.95rem;">
+                        Summary Text</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stat-grid-3">
+                    <div class="stat-box">
+                        <span class="text-slate-500 font-black uppercase mb-1" style="font-size: 0.75rem;">열정</span>
+                        <span id="stat-pas" class="text-white font-black" style="font-size: 1.5rem;">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="text-slate-500 font-black uppercase mb-1" style="font-size: 0.75rem;">입축구</span>
+                        <span id="stat-com" class="text-white font-black" style="font-size: 1.5rem;">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="text-slate-500 font-black uppercase mb-1" style="font-size: 0.75rem;">잔꾀</span>
+                        <span id="stat-coo" class="text-white font-black" style="font-size: 1.5rem;">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="text-slate-500 font-black uppercase mb-1" style="font-size: 0.75rem;">허세</span>
+                        <span id="stat-cre" class="text-white font-black" style="font-size: 1.5rem;">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="text-slate-500 font-black uppercase mb-1" style="font-size: 0.75rem;">친목</span>
+                        <span id="stat-fig" class="text-white font-black" style="font-size: 1.5rem;">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="text-slate-500 font-black uppercase mb-1" style="font-size: 0.75rem;">멘탈</span>
+                        <span id="stat-men" class="text-white font-black" style="font-size: 1.5rem;">0</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <!-- Details Section -->
+            <div class="flex flex-col gap-6">
+
+                <div id="report-card" class="glass glass-panel p-8 flex flex-col gap-10">
+
+                    <!-- Playstyle -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-2">
+                            <span style="font-size: 1.25rem;">📊</span>
+                            <h4 class="text-slate-500 font-black uppercase tracking-widest" style="font-size: 0.8rem;">
+                                현실
+                                플레이 스타일</h4>
+                        </div>
+                        <p id="res-style" class="text-white font-bold" style="font-size: 1.0rem; line-height: 1.5;">
+                            "스타일 설명..."
+                        </p>
+                    </div>
+
+                    <!-- Weakness -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-2">
+                            <span style="font-size: 1.25rem;">⚠️</span>
+                            <h4 class="text-rose-500 font-black uppercase tracking-widest" style="font-size: 0.8rem;">
+                                치명적
+                                약점 (WARNING)</h4>
+                        </div>
+                        <div class="warning-box">
+                            <p id="res-issue" class="text-rose-500 font-black mb-2" style="font-size: 0.9rem;">Issue:
+                                ...
+                            </p>
+                            <p id="res-solution" class="text-slate-300 font-medium"
+                                style="font-size: 0.8rem; line-height: 1.6;">Solution: ...</p>
+                        </div>
+                    </div>
+
+                    <!-- Habits -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center gap-2">
+                            <span style="font-size: 1.25rem;">🧐</span>
+                            <h4 class="text-emerald-500 font-black uppercase tracking-widest"
+                                style="font-size: 0.8rem;">흔한
+                                버릇 & 패턴</h4>
+                        </div>
+                        <div id="res-habits" class="flex flex-col gap-2">
+                            <!-- Habit items via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Chemistry -->
+                    <div class="chem-grid">
+                        <div class="chem-box">
+                            <p class="text-emerald-400 font-black uppercase tracking-widest"
+                                style="font-size: 0.65rem;">같이
+                                뛰면 좋은 팀원</p>
+                            <p id="res-best" class="text-slate-300 font-bold"
+                                style="font-size: 0.9rem; line-height: 1.4;">?
+                            </p>
+                        </div>
+                        <div class="chem-box">
+                            <p class="text-rose-500 font-black uppercase tracking-widest" style="font-size: 0.65rem;">
+                                상대하기
+                                힘든 선수</p>
+                            <p id="res-worst" class="text-slate-300 font-bold"
+                                style="font-size: 0.9rem; line-height: 1.4;">
+                                ?</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Verdict -->
+                <div
+                    style="background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.2), rgba(244, 63, 94, 0.2)); padding: 2rem; border-radius: 2.5rem; border: 1px solid var(--white-10);">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span style="font-size: 1.5rem;">📢</span>
+                        <p class="text-emerald-300 font-black uppercase tracking-widest" style="font-size: 0.65rem;">
+                            Final
+                            Verdict</p>
+                    </div>
+                    <p id="res-advice" class="text-white font-bold italic" style="font-size: 1.1rem; line-height: 1.6;">
+                        "조언..."
+                    </p>
+                </div>
+
+            </div>
+
+            <button id="reset-btn"
+                class="glass w-full py-5 rounded-3xl font-black text-slate-500 hover:text-white transition-all border border-white-10 mt-10 mb-4 btn-hover-effect">
+                다른 빌런 선수 찾아내기
+            </button>
+
+            <a href="https://www.instagram.com/off.3ide?igsh=MnNiaG8zOXlrbXY5" target="_blank"
+                class="glass w-full py-5 rounded-3xl font-black text-slate-500 hover:text-white transition-all border border-white-10 mb-8 btn-hover-effect"
+                style="display: flex; justify-content: center; align-items: center; text-decoration: none;">
+                오프사이드 인스타 확인하기!
+            </a>
+
+            <!-- Share Buttons (Bottom) -->
+            <div class="flex flex-col items-center gap-4 mb-12">
+                <p class="text-white font-bold opacity-80" style="font-size: 0.9rem;">결과 공유하기</p>
+                <div class="flex gap-4">
+                    <button id="share-down-btn" class="btn-share-simple" aria-label="이미지 저장">
+                        <!-- Download Icon -->
+                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6 stroke-slate-900" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                    <button id="share-insta-btn" class="btn-share-insta" aria-label="인스타 스토리 공유">
+                        <!-- Instagram Icon -->
+                        <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6 stroke-white" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </button>
+                    <button id="share-kakao-btn" class="btn-share-kakao" aria-label="카카오톡 공유">
+                        <!-- Kakao Icon (Filled Bubble) -->
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-[#371D1E]">
+                            <path
+                                d="M12 3c-5.523 0-10 3.582-10 8 0 2.628 1.626 4.966 4.146 6.366l-1.05 3.868c-.12.44.356.812.756.59l4.398-2.45c.574.07 1.162.108 1.75.108 5.523 0 10-3.582 10-8s-4.477-8-10-8z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
