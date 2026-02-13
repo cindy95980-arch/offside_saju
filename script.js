@@ -647,19 +647,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (dateInput && datePicker && calendarIcon) {
         // 1. Icon click opens the hidden date picker
-        calendarIcon.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default label actions if any
-            try {
-                if (datePicker.showPicker) {
+        const openPicker = (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Stop bubbling
+
+            // Try modern API first
+            if (datePicker.showPicker) {
+                try {
                     datePicker.showPicker();
-                } else {
+                } catch (err) {
                     datePicker.click();
                 }
-            } catch (err) {
-                // Formatting fallback or older browser: just attempt click
+            } else {
                 datePicker.click();
             }
-        });
+        };
+
+        calendarIcon.addEventListener('click', openPicker);
+        calendarIcon.addEventListener('touchend', openPicker);
 
         // 2. Sync: Date Picker -> Text Input
         datePicker.addEventListener('change', (e) => {

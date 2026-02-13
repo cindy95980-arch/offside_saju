@@ -888,7 +888,8 @@ button.btn-primary:active {
 /* Text Input Style for Manual Entry */
 .date-input-wrapper input[type="tel"] {
     position: relative;
-    z-index: 2;
+    z-index: 1;
+    /* Lower than icon */
     width: 100%;
     background: var(--white-5);
     border: 1px solid var(--white-10);
