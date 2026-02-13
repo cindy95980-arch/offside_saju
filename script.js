@@ -640,6 +640,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultView = document.getElementById('result-view');
     const form = document.getElementById('profile-form');
 
+    // 0. Check URL Params for Shared Result
+    const params = new URLSearchParams(window.location.search);
+    const encodedName = params.get('data_n'); // Changed param name to be less obvious
+    const encodedDate = params.get('data_d');
+
+    if (encodedName && encodedDate) {
+        try {
+            // Decode Base64 (Unicode safe)
+            const sharedName = decodeURIComponent(escape(atob(encodedName)));
+            const sharedDate = decodeURIComponent(escape(atob(encodedDate)));
+
+            // Validation check
+            if (sharedName.length > 0 && sharedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                mainContainer.classList.add('hidden');
+                // Skip loading screen for shared view
+                const data = generatePersona(sharedDate);
+                render(sharedName, data);
+
+                resultView.classList.remove('hidden');
+                resultView.style.display = 'block';
+            }
+        } catch (e) {
+            console.error('Failed to decode shared data', e);
+            // Optionally redirect to home or just do nothing
+        }
+    }
+
     // Date Picker Logic
     const dateInput = document.getElementById('birth-date');
     const datePicker = document.getElementById('birth-date-picker');
@@ -702,6 +729,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!name || !date) return;
 
+        // Update URL for sharing with privacy (Base64 encoding)
+        // btoa(unescape(encodeURIComponent(str))) handles Korean/Unicode
+        const encName = btoa(unescape(encodeURIComponent(name)));
+        const encDate = btoa(unescape(encodeURIComponent(date)));
+
+        const newUrl = `${window.location.pathname}?data_n=${encName}&data_d=${encDate}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+
         mainContainer.classList.add('hidden');
         loadScreen.classList.remove('hidden');
         loadScreen.style.display = 'flex';
@@ -719,38 +754,63 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('reset-btn').addEventListener('click', () => {
+        // Clear URL params
+        window.history.pushState({}, '', window.location.pathname);
+
         resultView.classList.add('hidden');
         document.getElementById('profile-form').reset();
         mainContainer.classList.remove('hidden');
     });
 
-    // 1. Image Download Logic (Profile + Report)
+    // 1. Image Download Logic (Profile + Report Separately)
     document.getElementById('share-down-btn').addEventListener('click', async () => {
-        const cardElement = document.querySelector('.player-card-container');
+        // Change: Capture only the inner .player-card (excludes glow/container margin)
+        const cardElement = document.querySelector('.player-card');
         const reportElement = document.getElementById('report-card');
 
         if (!cardElement || !reportElement) return;
 
         try {
-            // Capture Profile Card
+            // --- 1. Capture Profile Card ---
             const canvasProfile = await html2canvas(cardElement, {
+                scale: 3,
                 backgroundColor: null,
-                scale: 2
+                useCORS: true
             });
+
             const linkProfile = document.createElement('a');
             linkProfile.href = canvasProfile.toDataURL('image/png');
             linkProfile.download = 'soccer_persona_profile.png';
             linkProfile.click();
 
-            // Capture Detailed Report
+            // --- 2. Capture Report Card ---
+            // html2canvas cannot render backdrop-filter (blur). 
+            // We apply a solid background temporarily to ensure readability.
+            const originalBg = reportElement.style.background;
+            const originalBorder = reportElement.style.borderColor;
+
+            reportElement.style.background = '#1a1a2e'; // Dark solid background matching theme
+            reportElement.style.border = '1px solid #34d399'; // Emerald border for style
+
             const canvasReport = await html2canvas(reportElement, {
+                scale: 3,
                 backgroundColor: null,
-                scale: 2
+                useCORS: true
             });
-            const linkReport = document.createElement('a');
-            linkReport.href = canvasReport.toDataURL('image/png');
-            linkReport.download = 'soccer_persona_report.png';
-            linkReport.click();
+
+            // Restore Styles
+            reportElement.style.background = originalBg;
+            reportElement.style.borderColor = originalBorder;
+
+            // Download with a slight delay to prevent browser blocking multiple downloads
+            setTimeout(() => {
+                const linkReport = document.createElement('a');
+                linkReport.href = canvasReport.toDataURL('image/png');
+                linkReport.download = 'soccer_persona_report.png';
+                linkReport.click();
+            }, 800);
+
+            alert('프로필 카드와 리포트 카드가 각각 저장됩니다. (총 2장)');
 
         } catch (err) {
             console.error('Download failed:', err);
@@ -761,107 +821,57 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Instagram Share Logic (Mobile Native Share)
     // 2. Instagram Share Logic (Mobile Native Share - Story Optimized)
     // 2. Instagram Share Logic (Mobile Native Share - Story Optimized)
-    document.getElementById('share-insta-btn').addEventListener('click', async () => {
-        const playerCard = document.querySelector('.player-card-container');
-        if (!playerCard) return;
+    // 2. Share URL Logic (Clipboard Copy Only)
+    const shareBtn = document.getElementById('share-url-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                alert('내 결과 링크가 클립보드에 복사되었습니다!');
+            } catch (err) {
+                console.error('Copy failed', err);
+                alert('링크 복사에 실패했습니다.');
+            }
+        });
+    }
 
-        // 1. Create a dedicated Story Container (9:16 Ratio)
-        const storyContainer = document.createElement('div');
-        storyContainer.style.position = 'fixed';
-        storyContainer.style.top = '0';
-        storyContainer.style.left = '0';
-        storyContainer.style.width = '1080px';
-        storyContainer.style.height = '1920px';
-        storyContainer.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%)';
-        storyContainer.style.zIndex = '-9999';
-        storyContainer.style.display = 'flex';
-        storyContainer.style.flexDirection = 'column';
-        storyContainer.style.alignItems = 'center';
-        storyContainer.style.justifyContent = 'center';
-        storyContainer.style.fontFamily = 'Pretendard, sans-serif';
-
-        // 2. Add Title/Brand Logic (Optional, keeps it clean or adds context)
-        const header = document.createElement('div');
-        header.innerHTML = `
-            <h1 style="color:#34d399; font-size:3rem; font-weight:900; margin-bottom:0.5rem; text-align:center; text-transform:uppercase; letter-spacing: -0.05em; text-shadow: 0 4px 10px rgba(0,0,0,0.5);">Soccer Persona</h1>
-        `;
-        header.style.marginBottom = '80px';
-        storyContainer.appendChild(header);
-
-        // 3. Clone Player Card and Style for Story
-        const cardClone = playerCard.cloneNode(true);
-        // Reset positioning styles for the clone
-        cardClone.style.margin = '0';
-        cardClone.style.transform = 'scale(1.5)'; // Scale up for visibility
-        cardClone.style.transformOrigin = 'center';
-
-        // Remove glow effect from clone if it causes issues or double glow
-        const glow = cardClone.querySelector('.player-card-glow');
-        if (glow) glow.style.display = 'none';
-
-        storyContainer.appendChild(cardClone);
-        document.body.appendChild(storyContainer);
-
-        try {
-            // 4. Capture the Story Container
-            const canvas = await html2canvas(storyContainer, {
-                width: 1080,
-                height: 1920,
-                scale: 1, // Standard scale since container is already HD
-                backgroundColor: null,
-                useCORS: true,
-                allowTaint: true,
-                logging: false
-            });
-
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
-                const file = new File([blob], 'offside_saju_story.png', { type: 'image/png' });
-
-                if (navigator.share && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            files: [file],
-                            title: '내 축구 빌런 유형은?',
-                            text: '오프사이드에서 당신의 축구 페르소나를 확인하세요!',
-                        });
-                    } catch (err) {
-                        console.log('Share canceled or failed', err);
-                    }
-                } else {
-                    const link = document.createElement('a');
-                    link.href = canvas.toDataURL('image/png');
-                    link.download = 'offside_saju_story.png';
-                    link.click();
-                    alert('이미지가 저장되었습니다! 인스타그램 스토리에 공유해보세요.');
-                }
-
-                // Cleanup
-                document.body.removeChild(storyContainer);
-            }, 'image/png');
-
-        } catch (err) {
-            console.error('Capture failed', err);
-            alert('이미지 생성에 실패했습니다.');
-            if (document.body.contains(storyContainer)) document.body.removeChild(storyContainer);
-        }
-    });
-
-    // 3. Kakao/Link Share Logic
+    // 3. Kakao Share Logic
     document.getElementById('share-kakao-btn').addEventListener('click', () => {
-        const title = "골때리는 스카우팅 Report";
-        const text = document.getElementById('res-advice').innerText;
-        const url = window.location.href;
+        // Initialize Kakao SDK
+        if (window.Kakao && !Kakao.isInitialized()) {
+            Kakao.init('5d70a277233ce5905c0eb905fea0f96e');
+        }
 
-        if (navigator.share) {
-            navigator.share({
-                title: title,
-                text: text,
-                url: url
-            }).catch(console.error);
-        } else {
-            navigator.clipboard.writeText(`${title}\n${text}\n${url}`).then(() => {
-                alert('결과 링크가 복사되었습니다. 카카오톡에 붙여넣기 해보세요!');
+        const title = "골때리는 스카우팅 Report";
+        // Get the description from the result
+        const description = document.getElementById('res-advice') ?
+            document.getElementById('res-advice').innerText : '당신의 축구 페르소나를 확인하세요!';
+
+        // Use a default image or one generated (generating a URL for a dynamic image is hard without a backend)
+        const imageUrl = 'https://ifh.cc/g/TaMe5q.jpg'; // Provided Placeholder Image
+        const linkUrl = window.location.href;
+
+        if (window.Kakao) {
+            Kakao.Share.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: title,
+                    description: description,
+                    imageUrl: imageUrl,
+                    link: {
+                        mobileWebUrl: linkUrl,
+                        webUrl: linkUrl,
+                    },
+                },
+                buttons: [
+                    {
+                        title: '결과 확인하기',
+                        link: {
+                            mobileWebUrl: linkUrl,
+                            webUrl: linkUrl,
+                        },
+                    },
+                ],
             });
         }
     });
