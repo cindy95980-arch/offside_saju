@@ -875,4 +875,68 @@ button.btn-primary:active {
 
 .hidden {
     display: none !important;
+}/* Date Input Customization */
+.date-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Force iOS appearance clean up */
+.date-input-wrapper input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--white-5);
+    padding-right: 3rem;
+    /* Space for icon */
+    min-height: 3.5rem;
+    /* Easy tap target */
+    line-height: normal;
+    color: white;
+    font-family: var(--font-body);
+    width: 100%;
+    margin-top: 0;
+    /* Reset global margin if any */
+}
+
+/* Align text for iOS */
+.date-input-wrapper input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+    height: 1.5rem;
+    /* Fix vertical alignment */
+}
+
+/* Custom Icon Positioning */
+.calendar-icon {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    /* Let clicks pass through to the input */
+    color: var(--slate-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* Override previous hacky full-width indicator if needed, 
+   but keeping the indicator invisible ensures clicking the right side works */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    /* Ensure it's on top of custom icon if needed, but pointer-events:none on icon handles it */
 }
