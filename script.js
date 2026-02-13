@@ -765,14 +765,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const playerCard = document.querySelector('.player-card-container');
         if (!playerCard) return;
 
+        // 1. Store original styles
+        const originalWidth = playerCard.style.width;
+        const originalMaxWidth = playerCard.style.maxWidth;
+        const originalTransform = playerCard.style.transform;
+
         try {
-            // Capture only the player card
+            // 2. Apply temporary styles for Mobile Capture (iPhone X spec)
+            playerCard.style.width = '375px';
+            playerCard.style.maxWidth = 'none';
+            // Ensure centered layout is preserved or handled if needed, but usually width fix is enough for the element capture.
+
+            // 3. Capture with html2canvas options
             const canvas = await html2canvas(playerCard, {
-                scale: 4, // High resolution for clear text
-                backgroundColor: null, // Transparent background
-                useCORS: true,
+                scale: 3,               // Retina display resolution
+                windowWidth: 375,       // Emulate Mobile Device Width
+                windowHeight: 812,      // Emulate Mobile Device Height
+                backgroundColor: null,  // Transparent
+                useCORS: true,          // Cross-origin support
                 allowTaint: true
             });
+
+            // 4. Restore styles
+            playerCard.style.width = originalWidth;
+            playerCard.style.maxWidth = originalMaxWidth;
+            playerCard.style.transform = originalTransform;
 
             canvas.toBlob(async (blob) => {
                 if (!blob) return;
@@ -789,7 +806,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('Share canceled or failed', err);
                     }
                 } else {
-                    // Fallback for browsers that don't support file sharing
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
                     link.download = 'offside_saju_profile.png';
@@ -801,6 +817,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error('Capture failed', err);
             alert('이미지 생성에 실패했습니다.');
+            // Restore styles on error
+            playerCard.style.width = originalWidth;
+            playerCard.style.maxWidth = originalMaxWidth;
+            playerCard.style.transform = originalTransform;
         }
     });
 
